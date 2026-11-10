@@ -1,0 +1,149 @@
+{
+  "master": "fortec-agentguard.testnet",
+  "vendor": "vendor.fortec-agentguard.testnet",
+  "steps": [
+    {
+      "step": "deploy_contract",
+      "tx_hash": "4g7eCFUQywGJ7MV9rAcgerweF9bvSzaijVtbaSkvhDT3",
+      "explorer": "https://explorer.testnet.near.org/transactions/4g7eCFUQywGJ7MV9rAcgerweF9bvSzaijVtbaSkvhDT3",
+      "wasm_bytes": 173085
+    },
+    {
+      "step": "init_policy",
+      "tx_hash": "HM9EWsVsogJxja882jLRBHQBDmPPTYqZ3Crxn6ipU1UV",
+      "explorer": "https://explorer.testnet.near.org/transactions/HM9EWsVsogJxja882jLRBHQBDmPPTYqZ3Crxn6ipU1UV",
+      "per_tx_cap": "1 NEAR",
+      "daily_cap": "5 NEAR"
+    },
+    {
+      "step": "create_vendor",
+      "vendor": "vendor.fortec-agentguard.testnet",
+      "funded": "0.1 NEAR"
+    },
+    {
+      "step": "allowlist_vendor",
+      "tx_hash": "6wvpM3dWfYWmu6vLa9wQpRkb8g8ARyedawxf7tJxqJKX",
+      "explorer": "https://explorer.testnet.near.org/transactions/6wvpM3dWfYWmu6vLa9wQpRkb8g8ARyedawxf7tJxqJKX"
+    },
+    {
+      "step": "add_agent_function_call_key",
+      "tx_hash": "8n4rRsPVNYXP8Tz1qw1cH9KugJKi7eAravXiHp9x6tbB",
+      "explorer": "https://explorer.testnet.near.org/transactions/8n4rRsPVNYXP8Tz1qw1cH9KugJKi7eAravXiHp9x6tbB",
+      "public_key": "ed25519:AVihCChEtTicUBgGLHAc6nyZu9qKh4h2fjLZHyJpHjbF",
+      "receiver": "fortec-agentguard.testnet",
+      "methods": [
+        "pay"
+      ],
+      "allowance": "0.25 NEAR"
+    },
+    {
+      "step": "agent_legit_pay",
+      "tx_hash": "DnCnJe3KssPEj3YqnDVGN8EfpURopSYwDj6YXUbiGmN",
+      "explorer": "https://explorer.testnet.near.org/transactions/DnCnJe3KssPEj3YqnDVGN8EfpURopSYwDj6YXUbiGmN",
+      "from": "agent function-call key",
+      "to": "vendor.fortec-agentguard.testnet",
+      "amount": "0.5 NEAR",
+      "status": "{\"SuccessValue\":\"IjUwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCI=\"}"
+    },
+    {
+      "step": "verify",
+      "daily_spent_yocto": "500000000000000000000000",
+      "daily_spent_near": 0.5,
+      "killed": false,
+      "allowlist": [
+        "vendor.fortec-agentguard.testnet"
+      ],
+      "vendor_balance_near": 0.6
+    },
+    {
+      "step": "attack_over_cap_pay",
+      "blocked": true,
+      "error": "{\"index\":0,\"kind\":{\"index\":0,\"kind\":{\"FunctionCallError\":{\"ExecutionError\":\"WebAssembly trap: An `unreachable` opcode was executed.\"}}}}",
+      "tx_hash": "BcLCoZLHmcokRrSntYj5mHWVTxdTeSxBfRy9TGG7goAi",
+      "explorer": "https://explorer.testnet.near.org/transactions/BcLCoZLHmcokRrSntYj5mHWVTxdTeSxBfRy9TGG7goAi",
+      "tx_hash_note": "Recovered from the NearBlocks testnet indexer (api-testnet.nearblocks.io v3): args pay{amount: 2000000000000000000000000 (2 NEAR), recipient: vendor.fortec-agentguard.testnet}, outcomes.status FAILURE. near-api-js does not return the hash for a failed tx, so it was matched by timestamp order + args.",
+      "state_before": {
+        "daily_spent_near": 0.5,
+        "vendor_balance_near": 0.6
+      },
+      "state_after": {
+        "daily_spent_near": 0.5,
+        "vendor_balance_near": 0.6
+      },
+      "state_unchanged": true
+    },
+    {
+      "step": "attack_drain_non_allowlisted",
+      "blocked": true,
+      "error": "{\"index\":0,\"kind\":{\"index\":0,\"kind\":{\"FunctionCallError\":{\"ExecutionError\":\"WebAssembly trap: An `unreachable` opcode was executed.\"}}}}",
+      "tx_hash": "DBbMvcZYoHqupmUWfStoHrvu18ra2JLU8qSRuTxL9Tfg",
+      "explorer": "https://explorer.testnet.near.org/transactions/DBbMvcZYoHqupmUWfStoHrvu18ra2JLU8qSRuTxL9Tfg",
+      "tx_hash_note": "Recovered from the NearBlocks testnet indexer (api-testnet.nearblocks.io v3): args pay{amount: 50000000000000000000000000 (50 NEAR), recipient: attacker.evil.testnet}, outcomes.status FAILURE.",
+      "state_before": {
+        "daily_spent_near": 0.5,
+        "vendor_balance_near": 0.6
+      },
+      "state_after": {
+        "daily_spent_near": 0.5,
+        "vendor_balance_near": 0.6
+      },
+      "state_unchanged": true
+    },
+    {
+      "step": "attack_privilege_escalation_kill",
+      "blocked": true,
+      "error": "Transaction method name kill isn't allowed by the access key",
+      "tx_hash": null,
+      "explorer": null,
+      "state_before": {
+        "daily_spent_near": 0.5,
+        "vendor_balance_near": 0.6
+      },
+      "state_after": {
+        "daily_spent_near": 0.5,
+        "vendor_balance_near": 0.6
+      },
+      "state_unchanged": true
+    },
+    {
+      "step": "kill_switch_delete_agent_key",
+      "tx_hash": "9e6rEkNJ5TXzvG56mFRDrZ9fWqMVrgjCHN98opaELbmo",
+      "explorer": "https://explorer.testnet.near.org/transactions/9e6rEkNJ5TXzvG56mFRDrZ9fWqMVrgjCHN98opaELbmo",
+      "deleted_public_key": "ed25519:AVihCChEtTicUBgGLHAc6nyZu9qKh4h2fjLZHyJpHjbF"
+    },
+    {
+      "step": "verify_key_deleted",
+      "agent_key_still_listed": false,
+      "total_keys_on_vault": 1
+    },
+    {
+      "step": "attack_pay_after_revocation",
+      "blocked": true,
+      "error": "Signer \"fortec-agentguard.testnet\" doesn't have access key with the given public_key ed25519:AVihCChEtTicUBgGLHAc6nyZu9qKh4h2fjLZHyJpHjbF",
+      "tx_hash": null,
+      "explorer": null,
+      "tx_hash_note": "No transaction was created: the signer had no access key, so the call was rejected locally before broadcast. (An earlier draft of this file wrongly listed the public key here; corrected.)",
+      "state_before": {
+        "daily_spent_near": 0.5,
+        "vendor_balance_near": 0.6
+      },
+      "state_after": {
+        "daily_spent_near": 0.5,
+        "vendor_balance_near": 0.6
+      },
+      "state_unchanged": true
+    },
+    {
+      "step": "test_env_reset_readd_agent_key",
+      "tx_hash": "2o8HdhbsKSZsYWbAj6MmcroCJz5iChnudz196Asi97mg",
+      "explorer": "https://explorer.testnet.near.org/transactions/2o8HdhbsKSZsYWbAj6MmcroCJz5iChnudz196Asi97mg",
+      "note": "Dev-only reset so Days 2-4 can continue. The revocation proof above (kill_switch_delete_agent_key + attack_pay_after_revocation) is the real kill-switch evidence; the product demo will end with the key deleted, not re-added."
+    },
+    {
+      "step": "verify_agent_working_after_reset",
+      "tx_hash": "3zUTGShEo9caWSU7vStm9vPvBDKDXqRjdiwzGMzrSEzx",
+      "explorer": "https://explorer.testnet.near.org/transactions/3zUTGShEo9caWSU7vStm9vPvBDKDXqRjdiwzGMzrSEzx",
+      "amount": "0.1 NEAR"
+    }
+  ]
+}

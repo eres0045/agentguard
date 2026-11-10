@@ -1,0 +1,20 @@
+[package]
+name = "agentguard-vault"
+version = "0.1.0"
+edition = "2021"
+description = "AgentGuard vault: on-chain spending policy for an AI agent. The agent holds only a function-call access key to `pay`; per-tx cap, daily cap and recipient allowlist are enforced here, in the contract, not in a backend."
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+near-sdk = "5.1.0"
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true

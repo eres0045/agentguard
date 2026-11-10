@@ -1,0 +1,19 @@
+# Secrets — NEVER commit. Keys are generated locally by scripts/create-*.js
+keys/
+# Runtime data
+data/
+*.db
+# Python
+__pycache__/
+*.pyc
+backend/.venv/
+backend/model/
+# Rust
+contract/target/
+# Frontend
+frontend/node_modules/
+frontend/dist/
+# Node
+node_modules/
+# Test artifacts
+.pytest_cache/
