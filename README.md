@@ -143,5 +143,5 @@ Full machine-readable record: [`spike-results.json`](spike-results.json). The tw
 - Payout address (mainnet implicit account, free keypair — private key only in
   `keys/mainnet-payout.json`, never committed):
   `97e837cd7806b7a7a78feac52b1bda9bf2a1f1d5c0143aabd4741602852182a0`
-- Repo: public at submission time. Demo post on X (video/screenshots, tag @NEARProtocol + #NEARHackathon) is posted by the team lead — Muse has no X access.
+- Repo: public — https://github.com/eres0045/agentguard. Demo post on X (video/screenshots, tag @NEARProtocol + #NEARHackathon) goes out from the team's account @Eres0007.
 - Built at NEAR Hackathon "Build Beyond Boundaries", Nov 2026. Team FORTEC.
