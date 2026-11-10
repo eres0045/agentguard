@@ -22,7 +22,7 @@ const NEAR = (n) => utils.format.parseNearAmount(String(n));
 
 async function main() {
   const [action, ...args] = process.argv.slice(2);
-  const keysDir = path.join(__dirname, '..', '..', 'keys');
+  const keysDir = process.env.AGENTGUARD_KEYS_DIR || path.join(__dirname, '..', '..', 'keys');
   const master = JSON.parse(fs.readFileSync(path.join(keysDir, 'master.json'), 'utf8'));
   const fnKeySaved = JSON.parse(fs.readFileSync(path.join(keysDir, 'agent-function-call.json'), 'utf8'));
   const vaultId = master.account_id;

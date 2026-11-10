@@ -1,0 +1,15 @@
+# Never let keys or local runtime data into the Docker build context.
+keys/
+data/
+*.db
+.git/
+node_modules/
+frontend/node_modules/
+frontend/dist/
+backend/.venv/
+backend/model/
+backend/__pycache__/
+contract/target/
+.pytest_cache/
+*.webm
+*.mp4

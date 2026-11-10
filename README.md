@@ -70,6 +70,9 @@ Explorer base: `https://explorer.testnet.near.org/transactions/`
 | 🚫 Rogue over-cap direct attempt, 3 NEAR — contract FAILURE | `DvSX29V3YhypKFVd7K35RppcGwk9LywFXzpFzJPS6iXm` |
 | 🚫 Rogue drain direct attempt, 50 NEAR — contract FAILURE | `4AK2PvHirnuLHVhGbfTGgY7Zmqn7rLgBQBy3iRk13gBN` |
 | ✅ Rogue burst 3× 0.2 NEAR, then 2 velocity-blocked | `7SzBvm1xX9btcZziNMVNwwprsojapnKGYAn5qp8uRP7j` · `3jsVJCt2fXHwDwkfNDKHPyTgMAjrU43ndQigBvN5annr` · `4MixDHAbYaeDWbGAKQxZXQ5gbiuQqwpxyXxvLHoQfFBV` |
+| ✅ Video-take legit pay 0.5 NEAR (Nov 10, 11:28 IST) | `827VW7QDMu97xT7HnHxTE9W4cHesK1tZAFNd88YJv9P3` |
+| ✅ Video-take 1.5 NEAR queued, human-approved, executed (Nov 10, 11:29 IST) | `CQJrwWWNYMfrKZpNXApc4LqhvrhaWjLQacNmUf6bjAxQ` |
+| Vault top-up +4 NEAR (faucet-funded helper account, Nov 10) | `CSMoAitZde5MphWV2dAzsxR2rXTBEBz8Wcg3M6xSYJDf` |
 
 Full rogue-harness report: [`rogue-report-2026-11-10.json`](rogue-report-2026-11-10.json). Audit log holds 41 entries (13 EXECUTE, 22 BLOCK, 3 QUEUE, 2 APPROVED, 1 REJECTED) after two full rogue runs — the second run reproduced the first (legit EXECUTE `2TKASNaRJp5UjkCCtag1FvHrauseyC7qnFxMMjQYToFF`, burst 2 EXECUTE + 3 BLOCK).
 
@@ -114,9 +117,31 @@ Full machine-readable record: [`spike-results.json`](spike-results.json). The tw
 - **Dev-only reset.** After the kill-switch proof, `spike-attacks.js` re-adds the same agent key so development can continue. The production demo ends with the key deleted, not re-added.
 - **Keys are local only.** `keys/` is git-ignored and never committed. The faucet-funded testnet accounts in this repo are throwaway; the master key lives only on the machine that ran the setup scripts.
 - **Daily-cap budget.** The live tests + demo spend from the same 10 NEAR/day cap. If a run reports "exceeds remaining daily cap", that is the contract working — wait for the next UTC day or raise the cap as master.
+- **Vault storage floor (learned Nov 10).** The 173 KB contract stakes ~1.74 NEAR of storage, so the vault can only spend down to ~1.74 NEAR — at 1.88 NEAR balance every pay ≥0.2 NEAR failed with "wouldn't have enough balance to cover storage". Fixed with a +4 NEAR top-up from a faucet-funded helper account (tx above); vault balance ~5.88 NEAR. The vendor's 7.1 NEAR cannot be moved back (its key was random and never saved).
+
+## Hosted demo + video (Day 4, Nov 10)
+
+- **Demo video (draft, beats 1–3, no kill switch):** `agentguard-demo-draft-2026-11-10.mp4`
+  — 90 s, H.264, finalized and playable; hashes for this exact take are in the
+  table above. Honest caveat: the rogue verdicts render below the fold at
+  1280×800 and this take never scrolls to them, so the final take (after the
+  daily-cap reset at 05:30 IST Nov 11) must scroll each verdict into view,
+  and should add the kill-switch beat. The kill switch is NOT pressed yet —
+  it is one-way per vault; after the final take the vault is redeployed so
+  the hosted demo stays live.
+- **Hosted demo:** not live yet. Render (402, card required), Netlify
+  Functions (cannot carry TF + node + SQLite), and Cloudflare tunnel (VM
+  egress blocks QUIC and the edge TLS handshake) are all exhausted — see
+  `CHECKPOINT.md` §3. The prepared route is Hugging Face Spaces (Docker,
+  free, no card): `Dockerfile` + `docker-entrypoint.sh` in this repo, deploy
+  steps in the goal's `hidden_files/hf-spaces-deploy.md`. It needs a free HF
+  account (human gate). Keep the demo up to Nov 25 per the rules.
 
 ## Submission
 
 - Tracks: AI Security & Defense (primary), Agent Economy, Autonomous Business.
+- Payout address (mainnet implicit account, free keypair — private key only in
+  `keys/mainnet-payout.json`, never committed):
+  `97e837cd7806b7a7a78feac52b1bda9bf2a1f1d5c0143aabd4741602852182a0`
 - Repo: public at submission time. Demo post on X (video/screenshots, tag @NEARProtocol + #NEARHackathon) is posted by the team lead — Muse has no X access.
 - Built at NEAR Hackathon "Build Beyond Boundaries", Nov 2026. Team FORTEC.
