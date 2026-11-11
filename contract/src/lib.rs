@@ -126,9 +126,28 @@ impl Vault {
     /// One-way kill switch at the contract level. After this, `pay` always
     /// fails. (The backend kill switch additionally deletes the agent's
     /// function-call key, so the agent cannot even reach this contract.)
+    /// NOTE: `kill` is one-way for the AGENT, not for the owner — see
+    /// `revive` below. The owner reviving the vault is the documented
+    /// post-demo restore step (the demo's "redeploy"); it does not weaken
+    /// containment, because only the owner (master key) can call it.
     pub fn kill(&mut self) {
         self.assert_owner();
         self.killed = true;
+    }
+
+    /// Owner-only restore after a demo kill: un-freezes the contract and
+    /// resets the daily spend window, so the SAME vault account can host
+    /// the next demo / the hosted judges' demo. The agent's function-call
+    /// key is NOT restored here — re-add it separately (owner action,
+    /// `admin.js readd_agent_key`). This exists because `#[init] new`
+    /// refuses to run on an already-initialized account, so a plain
+    /// redeploy cannot reset a killed vault (proven 2026-11-11: redeploy
+    /// of the same wasm + `new` traps with an unreachable opcode).
+    pub fn revive(&mut self) {
+        self.assert_owner();
+        self.killed = false;
+        self.daily_spent = 0;
+        self.day = env::block_timestamp() / NS_PER_DAY;
     }
 
     // ---- views ----

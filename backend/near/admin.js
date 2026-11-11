@@ -8,6 +8,7 @@
 //   remove_recipient <account>
 //   set_caps <per_tx_near> <daily_near>
 //   kill_contract                           -> contract kill() (one-way freeze)
+//   revive                                  -> contract revive() (owner-only restore after a demo kill; does NOT re-add the agent key)
 //   delete_agent_key                        -> DeleteKey for the agent fn key
 //   readd_agent_key                         -> re-add agent fn key (pay only, 0.25 NEAR)
 // Prints one JSON object.
@@ -75,6 +76,11 @@ async function main() {
       }
       case 'kill_contract': {
         const tx = await masterAccount.functionCall({ contractId: vaultId, methodName: 'kill', args: {}, gas: GAS, attachedDeposit: BigInt(0) });
+        out(withHash(action, tx));
+        break;
+      }
+      case 'revive': {
+        const tx = await masterAccount.functionCall({ contractId: vaultId, methodName: 'revive', args: {}, gas: GAS, attachedDeposit: BigInt(0) });
         out(withHash(action, tx));
         break;
       }

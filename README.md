@@ -44,7 +44,7 @@ backend/.venv/bin/python backend/app.py   # Flask API on :5000, serves the dashb
 | **Agent NEVER holds** | The master key. It cannot transfer funds by itself, call admin methods, or change policy. |
 | **Contract enforces (on-chain)** | `pay` only succeeds if: vault not killed · recipient on allowlist · amount ≤ per-tx cap (2 NEAR) · amount fits the daily cap (10 NEAR). |
 | **Backend enforces (pre-screen)** | Same rules, plus: velocity (max 3 payments / 60s), a TensorFlow classifier score (P(attack) from synthetic legit/attack patterns — a flag only ever QUEUES a payment for human review), and an approval threshold (>1 NEAR always needs a human). |
-| **Kill switch** | One click: contract `kill()` (one-way freeze) + on-chain `DeleteKey` of the agent's key. After that the agent cannot even call `pay`. |
+| **Kill switch** | One click: contract `kill()` (one-way freeze) + on-chain `DeleteKey` of the agent's key. After that the agent cannot even call `pay`. One-way for the *agent* — the owner can restore the vault for the next demo with the owner-only `revive()` (added Nov 11; see CHECKPOINT §6 — a plain redeploy cannot reset a killed vault because near-sdk `#[init]` refuses an initialized account). |
 
 ## Verified on testnet — real hashes (Nov 10, 2026)
 
@@ -72,7 +72,15 @@ Explorer base: `https://explorer.testnet.near.org/transactions/`
 | ✅ Rogue burst 3× 0.2 NEAR, then 2 velocity-blocked | `7SzBvm1xX9btcZziNMVNwwprsojapnKGYAn5qp8uRP7j` · `3jsVJCt2fXHwDwkfNDKHPyTgMAjrU43ndQigBvN5annr` · `4MixDHAbYaeDWbGAKQxZXQ5gbiuQqwpxyXxvLHoQfFBV` |
 | ✅ Video-take legit pay 0.5 NEAR (Nov 10, 11:28 IST) | `827VW7QDMu97xT7HnHxTE9W4cHesK1tZAFNd88YJv9P3` |
 | ✅ Video-take 1.5 NEAR queued, human-approved, executed (Nov 10, 11:29 IST) | `CQJrwWWNYMfrKZpNXApc4LqhvrhaWjLQacNmUf6bjAxQ` |
+| ✅ FINAL take legit 0.5 NEAR (Nov 11, take 2) | `DKCYwb2bxmJhpsZGC5rn7gGFg68m4bJeeAfZKKgyubah` |
+| ✅ FINAL take 1.5 NEAR queued (#7), human-approved, executed (Nov 11) | `ELT3W7FrJm1aReuZWRJGjraCAB6Z8fufUuZDLBjJhM97` |
+| 🛑 FINAL take kill switch: contract kill (Nov 11) | `Ex3CnDKw2b5Awi3E6AveAmghNqp3oU6V64Dyx75vYUQB` |
+| 🛑 FINAL take kill switch: agent key deleted (Nov 11) | `7HFn4YttRRXs5QdNTc7vjEYdLGCBuaKa13S4ypoZGF4n` |
+| 🔄 Vault revived after final take (owner-only `revive`, Nov 11) | `D7dhG7296r1rDpBQha62yE6XEfyTPCnuVRXkr19rcANq` |
+| 🔑 Agent key re-added after revive (Nov 11) | `9voyM1Gzv7GB9acRfCvokcB9PbSYBTdMm4z3SwQzPvaF` |
 | Vault top-up +4 NEAR (faucet-funded helper account, Nov 10) | `CSMoAitZde5MphWV2dAzsxR2rXTBEBz8Wcg3M6xSYJDf` |
+| Vault top-up +1.9 NEAR (same helper, Nov 11) | `5V2GJ6XywMNzMRf4q8WMhwrWyc4m1NXiUtbyiBJCvptK` |
+| Vault top-up +4 NEAR (fresh helper fortec-topup-29732, Nov 11) | `HCeTqUhQYXeC198qTUhrLt4WoqQyDU1vCDKNhf8zZawM` |
 
 Full rogue-harness report: [`rogue-report-2026-11-10.json`](rogue-report-2026-11-10.json). Audit log holds 41 entries (13 EXECUTE, 22 BLOCK, 3 QUEUE, 2 APPROVED, 1 REJECTED) after two full rogue runs — the second run reproduced the first (legit EXECUTE `2TKASNaRJp5UjkCCtag1FvHrauseyC7qnFxMMjQYToFF`, burst 2 EXECUTE + 3 BLOCK).
 
@@ -121,21 +129,20 @@ Full machine-readable record: [`spike-results.json`](spike-results.json). The tw
 
 ## Hosted demo + video (Day 4, Nov 10)
 
-- **Demo video (draft, beats 1–3, no kill switch):** `agentguard-demo-draft-2026-11-10.mp4`
-  — 90 s, H.264, finalized and playable; hashes for this exact take are in the
-  table above. Honest caveat: the rogue verdicts render below the fold at
-  1280×800 and this take never scrolls to them, so the final take (after the
-  daily-cap reset at 05:30 IST Nov 11) must scroll each verdict into view,
-  and should add the kill-switch beat. The kill switch is NOT pressed yet —
-  it is one-way per vault; after the final take the vault is redeployed so
-  the hosted demo stays live.
-- **Hosted demo:** not live yet. Render (402, card required), Netlify
-  Functions (cannot carry TF + node + SQLite), and Cloudflare tunnel (VM
-  egress blocks QUIC and the edge TLS handshake) are all exhausted — see
-  `CHECKPOINT.md` §3. The prepared route is Hugging Face Spaces (Docker,
-  free, no card): `Dockerfile` + `docker-entrypoint.sh` in this repo, deploy
-  steps in the goal's `hidden_files/hf-spaces-deploy.md`. It needs a free HF
-  account (human gate). Keep the demo up to Nov 25 per the rules.
+- **Demo video (FINAL, Nov 11):** `agentguard-demo-final-2026-11-11.mp4`
+  — **83.4 s, H.264, 1280×800**, edited from a 155 s raw take (only
+  waiting time trimmed; raw master kept as
+  `agentguard-demo-final-2026-11-11-raw.mp4`). All four beats with
+  verdicts and tx hashes verified visible on screen by frame inspection:
+  50 NEAR drain BLOCKed, 0.5 NEAR legit EXECUTE, 1.5 NEAR QUEUE →
+  human-approved EXECUTE, kill switch with both hashes + a rejected
+  post-kill attempt. Hashes for this exact take are in the table above.
+  The Nov 10 draft (`agentguard-demo-draft-2026-11-10.mp4`, beats 1–3,
+  no kill switch, verdicts below the fold) is superseded.
+- **Hosted demo:** not live yet — see CHECKPOINT.md §7 (HF Spaces is
+  PRO-gated; Railway trial is the recommended route and needs Ronit's
+  signup). The vault itself is live (revived after the final take,
+  8.27 NEAR, 0/10 spent) and the local dashboard runs on :5000.
 
 ## Submission
 

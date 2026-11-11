@@ -53,7 +53,33 @@ Mainnet implicit payout account (free keypair, no purchase/card/crypto):
 - [x] HF Spaces deploy pack ready: `Dockerfile`, `docker-entrypoint.sh`,
   `.dockerignore`, `hidden_files/hf-spaces-deploy.md` (steps),
   `hidden_files/hf-deploy.sh` (dry-run tested; refuses to copy `keys/`).
-- [x] Kill switch NOT pressed. Vault alive (`killed: false`).
+- [x] **Demo video, FINAL (take 2, Nov 11).**
+  `agentguard-demo-final-2026-11-11.mp4` — **83.4 s, H.264, 1280×800,
+  1.5 MB** (ffprobe-verified; raw 155 s master kept as
+  `agentguard-demo-final-2026-11-11-raw.mp4`, edit only trims waiting
+  time — every beat is genuine footage). All 4 beats, every verdict and
+  tx hash verified visible on screen by frame inspection:
+  - Drain 50 NEAR → BLOCK (policy + contract FAILURE, WASM trap)
+  - Legit 0.5 NEAR → EXECUTE `DKCYwb2bxmJhpsZGC5rn7gGFg68m4bJeeAfZKKgyubah`
+  - 1.5 NEAR → QUEUE (#7) → human-approved → EXECUTE
+    `ELT3W7FrJm1aReuZWRJGjraCAB6Z8fufUuZDLBjJhM97`
+  - Kill switch → contract kill
+    `Ex3CnDKw2b5Awi3E6AveAmghNqp3oU6V64Dyx75vYUQB` + key deletion
+    `7HFn4YttRRXs5QdNTc7vjEYdLGCBuaKa13S4ypoZGF4n`; post-kill attempt
+    rejected ("vault is killed" / "no matching key pair").
+  Take 1 (same day) is SUPERSEDED: its kill-hashes frame never showed on
+  screen (scroll targeted a page-level ancestor div). Script fixed in
+  `hidden_files/record-final-take.py` (deepest-div / first-row scroll).
+- [x] **Vault revived after the final take (Nov 11).** The vault is LIVE
+  again for judges: killed=false, caps 2/10 NEAR, daily spent 0/10,
+  balance 8.27 NEAR (floor 1.74). Revive tx
+  `D7dhG7296r1rDpBQha62yE6XEfyTPCnuVRXkr19rcANq`, agent key re-added
+  `9voyM1Gzv7GB9acRfCvokcB9PbSYBTdMm4z3SwQzPvaF`. Liveness re-verified
+  after revive via a drain attempt (policy BLOCK + contract FAILURE, no
+  funds moved). Top-up +4 NEAR
+  `HCeTqUhQYXeC198qTUhrLt4WoqQyDU1vCDKNhf8zZawM` (helper
+  fortec-topup-29732.testnet, ~6 NEAR spare).
+- [x] Kill switch NOT pressed on the CURRENT vault (revived after take 2).
 
 ## 3. Hosted demo — NOT LIVE YET (one human gate)
 **There is no public demo URL yet.** Everything hostable from this VM was
@@ -104,3 +130,52 @@ Every decision and tx hash lands in an auditable log. Demo: a rogue agent's
 payment executes through the agent's function-call key only, a 1.5 NEAR
 payment parks for human approval, and the kill switch deletes the agent's
 key on-chain."
+
+## 6. Day 5 — final take (2026-11-11, after the 05:30 IST cap reset)
+
+**CORRECTION — the "redeploy the vault" note in §2/§4 was wrong.**
+`scripts/deploy-vault.js` re-runs `new`, but near-sdk `#[init]` panics
+on an already-initialized account, so redeploy + `new` traps with an
+unreachable opcode (proven 2026-11-11: deploy tx
+`AJskJLAcXJmTssTFDzVevf4Ej21xN8FbjYNu2XYpxbqq` succeeded, init
+failed, vault stayed killed). The working restore is the owner-only
+`revive()` added to the contract the same day (un-freezes + resets the
+daily window; does NOT re-add the agent key — that is a separate owner
+step, `admin.js readd_agent_key`). Kill stays one-way for the AGENT;
+only the owner (master key) can revive. The contract was rebuilt
+(cargo 1.99, wasm 173,320 bytes) and deployed
+(`D3SgCVwS9dpBGujyZY1RnXBUA93G42jF9cPzCyMKQpys`); `admin.js` gained a
+`revive` action. Full procedure: deploy wasm → `revive` → `readd_agent_key`
+→ verify `policy` (killed=false, spent 0) → top up if balance < ~5 NEAR.
+
+**Cap-reset gotcha (also found Nov 11).** The contract's daily rollover
+is lazy and only persists on a SUCCESSFUL `pay` — the Flask policy
+engine reads the stored spent (10/10) and BLOCKs everything, so no pay
+can reach the chain to trigger the rollover (deadlock). A blocked direct
+attempt does not help: `pay` asserts allowlist/cap BEFORE rollover and
+a failed tx rolls its state change back. Fix used: one direct agent-key
+pay of 0.5 NEAR to the vendor (bypasses the Flask engine)
+`GMxC7XJQaWNr1UaGyrAYsgxbmsAsBe9ozHAd2px4PrA7` — day rolled to 20768,
+spent 0.5/10, dashboard worked after that. (Take 1 failed on this
+before the fix: legit 0.5 BLOCKed "0.0000 NEAR left", no spend made.)
+
+**Take 1 (superseded, 165 s raw).** Beat 1 OK; beat 2 BLOCKed by the
+cap deadlock above (audit #54). No kill was pressed. Video deleted.
+
+**Take 2 (FINAL, 83.4 s edited / 155 s raw).** Hashes in §2 above.
+Daily spend after take 2: 2.0/10 (counter reset to 0 by the revive).
+Vault balance after revive + top-up: 8.27 NEAR.
+
+## 7. Hosted demo — STILL NOT LIVE (no change Nov 11)
+
+HF Space was NOT deployed: the HF account (Eres0007) exists, but
+Docker Spaces are PRO-gated and no Space was ever created; nothing was
+paid for. Round-2 alternatives
+(`hidden_files/hosted-demo-alternatives-round2-2026-11-10.md`) recommend
+the **Railway trial** (top pick, $5 one-time grant, no card) — first step
+is Ronit's: sign up at railway.com and connect GitHub `eres0045`.
+Fallbacks: Replit → SnapDeploy → submit without a hosted demo (the form
+needs only the public repo + the X post; a hosted demo is NOT a
+submission requirement). The vault itself is live and ready at
+fortec-agentguard.testnet whenever a host is chosen; the local dashboard
+runs at http://127.0.0.1:5000.
